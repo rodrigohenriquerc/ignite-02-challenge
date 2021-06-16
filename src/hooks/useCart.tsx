@@ -59,12 +59,11 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
-      const { data: productInStock }: { data: Stock } = await api.get(
-        `stock/${productId}`
-      );
+      const { data }: { data: Stock } = await api.get(`stock/${productId}`);
 
-      if (productInStock.amount <= 1) {
-        throw new Error("Quantidade solicitada fora de estoque");
+      if (data.amount <= 1) {
+        toast.error("Quantidade solicitada fora de estoque");
+        return;
       }
 
       const updatedCart = cart.map((cartItem) =>
@@ -72,8 +71,8 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       );
       setCart(updatedCart);
       setCartLocalStorage(updatedCart);
-    } catch (error) {
-      toast.error(error.message);
+    } catch {
+      toast.error("Erro na alteração de quantidade do produto");
     }
   };
 
