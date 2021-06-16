@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { api } from "../services/api";
 import { Product, Stock } from "../types";
-import { getCartLocalStorage } from "../util/localStorage";
+import { getCartLocalStorage, setCartLocalStorage } from "../util/localStorage";
 
 interface CartProviderProps {
   children: ReactNode;
@@ -29,9 +29,11 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const addProduct = async (productId: number) => {
     try {
-      // TODO
+      const { data } = await api.get(`products/${productId}`);
+      setCart([...cart, { ...data, amount: 1 }]);
+      setCartLocalStorage([...cart, { ...data, amount: 1 }]);
     } catch {
-      // TODO
+      toast.error("Erro na adição do produto");
     }
   };
 
