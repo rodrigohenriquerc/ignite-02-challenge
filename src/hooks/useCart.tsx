@@ -54,14 +54,22 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
-      const { data } = await api.get(`products/${productId}`);
+      const { data: productInStock }: { data: Stock } = await api.get(
+        `stock/${productId}`
+      );
+
+      if (productInStock.amount <= 1) {
+        throw new Error("Quantidade solicitada fora de estoque");
+      }
+
+      const { data: product } = await api.get(`products/${productId}`);
       const updatedCart = cart.map((cartItem) =>
-        cartItem.id === productId ? { ...data, amount } : cartItem
+        cartItem.id === productId ? { ...product, amount } : cartItem
       );
       setCart(updatedCart);
       setCartLocalStorage(updatedCart);
-    } catch {
-      // TODO
+    } catch (error) {
+      toast.error(error.message);
     }
   };
 
