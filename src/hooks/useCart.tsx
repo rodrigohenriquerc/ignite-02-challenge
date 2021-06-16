@@ -29,6 +29,10 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const addProduct = async (productId: number) => {
     try {
+      const cartItem = cart.find((item) => item.id === productId);
+      if (cartItem) {
+        return updateProductAmount({ productId, amount: cartItem.amount + 1 });
+      }
       const { data } = await api.get(`products/${productId}`);
       setCart([...cart, { ...data, amount: 1 }]);
       setCartLocalStorage([...cart, { ...data, amount: 1 }]);
@@ -50,7 +54,12 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
-      // TODO
+      const { data } = await api.get(`products/${productId}`);
+      const updatedCart = cart.map((cartItem) =>
+        cartItem.id === productId ? { ...data, amount } : cartItem
+      );
+      setCart(updatedCart);
+      setCartLocalStorage(updatedCart);
     } catch {
       // TODO
     }
