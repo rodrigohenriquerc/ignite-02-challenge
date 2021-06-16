@@ -43,7 +43,9 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const removeProduct = (productId: number) => {
     try {
-      // TODO
+      const updatedCart = cart.filter((cartItem) => cartItem.id !== productId);
+      setCart(updatedCart);
+      setCartLocalStorage(updatedCart);
     } catch {
       // TODO
     }
