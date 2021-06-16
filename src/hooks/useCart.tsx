@@ -67,9 +67,8 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
         throw new Error("Quantidade solicitada fora de estoque");
       }
 
-      const { data: product } = await api.get(`products/${productId}`);
       const updatedCart = cart.map((cartItem) =>
-        cartItem.id === productId ? { ...product, amount } : cartItem
+        cartItem.id === productId ? { ...cartItem, amount } : cartItem
       );
       setCart(updatedCart);
       setCartLocalStorage(updatedCart);
